@@ -14,10 +14,24 @@
 error_reporting(E_ALL);
 
 require_once 'vendor/autoload.php';
+require_once 'common.php';
 
 if ( ! file_exists(__DIR__.'/config.php')) {
 
     if (isset($_POST['API_KEY']) && isset($_POST['DOMAIN'])) {
+
+        $force_config = [
+            'api_key' => $_POST['API_KEY'],
+            'domain'  => $_POST['DOMAIN'],
+            'europe'  => true,
+        ];
+
+        try {
+            _get_mailgun($force_config)->events()->get($force_config['domain']);
+        } catch (\Mailgun\Exception\HttpClientException $e) {
+            die('Gegevens incorrect. Refresh de pagina');
+        }
+
         $config_example = __DIR__.'/config.example.php';
         $file           = fopen($config_example, 'r');
         $content        = fread($file, filesize($config_example));
@@ -37,6 +51,5 @@ if ( ! file_exists(__DIR__.'/config.php')) {
 }
 
 require_once 'config.php';
-require_once 'common.php';
 
 require_once 'output.php';

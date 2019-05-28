@@ -7,12 +7,16 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 $mailgun = false;
 
-function _get_mailgun()
+function _get_mailgun($force_config = false)
 {
     global $mailgun, $config;
 
     if ($mailgun) {
         return $mailgun;
+    }
+
+    if (is_array($force_config)) {
+        $config = $force_config;
     }
 
     if ($config['europe']) {
